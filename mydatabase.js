@@ -2,10 +2,10 @@ import mysql from 'mysql2'
 import dotenv from 'dotenv'
 dotenv.config()
 const pool = mysql.createPool({
-    host: process.env.admin,
-    user: process.env.root,
-    password: process.env.psw,
-    database: process.env.mydatabase
+    host: process.env.DB_HOST,
+    user: process.env.DB_USER,
+    password: process.env.DB_PASSWORD,
+    database: process.env.DB_NAME
 }).promise()
 
 export async function createuser(name , lastname, email, password) {
@@ -30,41 +30,53 @@ export async function showprofile(id) {
 
 export async function club (title, descr, managerid) {
     const newclub = await pool.query('INSERT INTO club (title, description, manager_id, status) VALUES (?,?,?, "pending")',[title, descr, managerid])
+     return newclub
 }
 export async function rejectclub(clubid) {
     const [rejcl] = await pool.query('UPDATE club SET status="deleted" WHERE club_id=?', [clubid])
-    return[rejcl]
+    return rejcl
 }
 
 export async function acceptclub(clubidd) {
     const [acccl] = await pool.query('UPDATE club SET status="approved" WHERE club_id=?', [clubidd])
-    return [acccl]
+    return acccl
 }
 
 export async function showclubs() {
     const [shclb] = await pool.query('SELECT * FROM club WHERE status="approved"')
-    return shclb[0]
+    return shclb
     
 }
 
 export async function newmembership(iduser, idclub) {
-    const newmembr = await pool.query('INSERT INTO membership(userid, clubid, membership_role, membership_status) VALUES (?, ?, "user", "pending")')
+
+    const [newmembr] = await pool.query(
+        'INSERT INTO membership(userid, clubid, membership_role, membership_status) VALUES (?, ?, "user", "pending")',
+        [iduser, idclub]
+    )
+
     return newmembr
 }
+
 export async function makemanagermember(idmanag) {
-    const mangrmemb = await pool.query('UPDATE membership SET membership_role="manager" WHERE membership_id=?', [idmanag])
-    return [mangrmemb]
+
+    const [mangrmemb] = await pool.query(
+        'UPDATE membership SET membership_role="manager" WHERE membership_id=?',
+        [idmanag]
+    )
+
+    return mangrmemb
 }
 
 export async function apprmember(memberid) {
     const [apprmemb] = await pool.query('UPDATE membership SET membership_status="approved" WHERE membership_id=?', [memberid])
-    return [apprmemb]
+    return apprmemb
 }
 
 
 export async function rejmember(memberidd) {
     const [rejmemb] = await pool.query('UPDATE membership SET membership_status="rejected" WHERE membership_id=?', [memberidd])
-    return [rejmemb]
+    return rejmemb
 }
 
 export async function newevent(clubid, title, description, role, seats, location, gplatos, gmikos, starttime, endtime) {
@@ -73,39 +85,85 @@ export async function newevent(clubid, title, description, role, seats, location
     
 }
 export async function reservationevent(eventid, userid) {
-    const newreservation = await pool.query('INSERT INTO reservation (res_evid, res_userid, res_status, res_apprearedatevent) VALUES (?, ?, "pending", "false")', [eventid, userid])
+
+    const [newreservation] = await pool.query(
+        `INSERT INTO reservation
+        (
+            res_evid,
+            res_userid,
+            res_status,
+            res_apprearedatevent
+        )
+        VALUES (?, ?, "pending", false)`,
+        [eventid, userid]
+    )
+
     return newreservation
 }
 
 export async function acceptreservation(resid) {
-    const apprres = await pool.query('UPDATE reservation SET res_status="approved" WHERE res_id=?', [resid])
+
+    const [apprres] = await pool.query(
+        'UPDATE reservation SET res_status="approved" WHERE res_id=?',
+        [resid]
+    )
+
     return apprres
-    
 }
 
 export async function rejectreservation(residd) {
-    const rejres = await pool.query('UPDATE reservation SET res_status="rejected" WHERE res_id=?', [residd])
+
+    const [rejres] = await pool.query(
+        'UPDATE reservation SET res_status="rejected" WHERE res_id=?',
+        [residd]
+    )
+
     return rejres
 }
 
 
 export async function appearedatevent(residdd) {
-    const apear  = await pool.query('UPDATE reservation SET res_apprearedatevent=TRUE WHERE res_id=?', [residdd])
+
+    const [apear] = await pool.query(
+        'UPDATE reservation SET res_apprearedatevent=TRUE WHERE res_id=?',
+        [residdd]
+    )
+
     return apear
 }
 
 export async function newannouncements(idclub, iduser, anndescr, anntitle){
-    const newann = await pool.query('INSERT INTO announcements(ann_clubid, ann_userid, ann_descr, ann_title) VALUES (?, ?, ?, ?)', [idclub, iduser, anndescr, anntitle])
+
+    const [newann] = await pool.query(
+        'INSERT INTO announcements(ann_clubid, ann_userid, ann_descr, ann_title) VALUES (?, ?, ?, ?)',
+        [idclub, iduser, anndescr, anntitle]
+    )
+
     return newann
 }
 
-export async function newreviewev(reventid, ruserid, review, revdescription) {
-        const newrev = await pool.query('INSERT INTO review_EVENT(r_eventid, r_userid, r_review, r_descr) VALUES (?, ?, ?, ?)', [reventid, ruserid, review, revdescription])
-        return newrev
-    
+export async function newreviewev(
+    reventid,
+    ruserid,
+    review,
+    revdescription
+) {
+
+    const [newrev] = await pool.query(
+        'INSERT INTO review_EVENT(r_eventid, r_userid, r_review, r_descr) VALUES (?, ?, ?, ?)',
+        [reventid, ruserid, review, revdescription]
+    )
+
+    return newrev
 }
+
 export async function newstats(statsuserid, statstype, stats) {
-    const newstats = await pool.query('INSERT INTO statistics (stats_userid, statstype, stats) VALUES(?, ?, ?, ?)', [statsuserid, statstype, stats])
+
+    const [newstats] = await pool.query(
+        'INSERT INTO statistics (stats_userid, statstype, stats) VALUES (?, ?, ?)',
+        [statsuserid, statstype, stats]
+    )
+
     return newstats
 }
 
