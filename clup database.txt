@@ -1,134 +1,169 @@
-CREATE TABLE user{
-	user_id INT AUTO_INCREMENT,
-	name VARCHAR(50) NOT NULL,
-	lastname VARCHAR(50) NOT NULL,
-	email VARCHAR(50) NOT NULL,
-	password VARCHAR(100) NOT NULL,
-	role ENUM('user', 'manager', 'admin') DEFAULT 'user',
-	profil_img VARCHAR(50) DEFAULT NULL,
-	user_bio TEXT DEFAULT NULL,
-	user_interests TEXT('')
-	PRIMARY KEY(user_id)
-	
-};
+import mysql from 'mysql2'
+import dotenv from 'dotenv'
+dotenv.config()
+const pool = mysql.createPool({
+    host: process.env.DB_HOST,
+    user: process.env.DB_USER,
+    password: process.env.DB_PASSWORD,
+    database: process.env.DB_NAME
+}).promise()
+
+export async function createuser(name , lastname, email, password) {
+    const newuser = await pool.query('INSERT INTO user (name, lastname, email, password, role) VALUES (?, ?, ?, ?, "user")',[name, lastname, email, password])
+    return newuser
+}
+
+export async function editprofile(id, userimg, bio, interests ) {
+    const [editpr] = await pool.query('UPDATE user SET profil_img = ?, user_bio = ?, user_interests = ? WHERE user_id = ?', [userimg, bio, interests, id])
+    return [editpr]
+}
+
+export async function turntomanager(id) {
+    const [managr] = await pool.query('UPDATE user SET role="manager" WHERE user_id=?', [id])
+    return managr
+}
+
+export async function showprofile(id) {
+    const [shuser] = await pool.query('SELECT * FROM user WHERE user_id=? ',[id])
+    return shuser[0]
+}
+
+export async function club (title, descr, managerid) {
+    const newclub = await pool.query('INSERT INTO club (title, description, manager_id, status) VALUES (?,?,?, "pending")',[title, descr, managerid])
+     return newclub
+}
+export async function rejectclub(clubid) {
+    const [rejcl] = await pool.query('UPDATE club SET status="deleted" WHERE club_id=?', [clubid])
+    return rejcl
+}
+
+export async function acceptclub(clubidd) {
+    const [acccl] = await pool.query('UPDATE club SET status="approved" WHERE club_id=?', [clubidd])
+    return acccl
+}
+
+export async function showclubs() {
+    const [shclb] = await pool.query('SELECT * FROM club WHERE status="approved"')
+    return shclb
+    
+}
+
+export async function newmembership(iduser, idclub) {
+
+    const [newmembr] = await pool.query(
+        'INSERT INTO membership(userid, clubid, membership_role, membership_status) VALUES (?, ?, "user", "pending")',
+        [iduser, idclub]
+    )
+
+    return newmembr
+}
+
+export async function makemanagermember(idmanag) {
+
+    const [mangrmemb] = await pool.query(
+        'UPDATE membership SET membership_role="manager" WHERE membership_id=?',
+        [idmanag]
+    )
+
+    return mangrmemb
+}
+
+export async function apprmember(memberid) {
+    const [apprmemb] = await pool.query('UPDATE membership SET membership_status="approved" WHERE membership_id=?', [memberid])
+    return apprmemb
+}
 
 
-CREATE TABLE club{
-	club_id INT AUTO_INCREMENT,
-	title VARCHAR(50) NOT NULL UNIQUE,
-	description TEXT NOT NULL,
-	manager_id INT NOT NULL,
-	status('pending', 'approved', 'deleted') DEFAULT 'pending',
-	creationdate timestamp default current_timestamp,
-	PRIMARY KEY(club_id),
-	CONSTRAINT MANAGERID
-	FOREIGN KEY(manager_id)
-	REFERENCES user(user_id)
-	ON DELETE CASCADE ON UPDATE CASCADE
-};
+export async function rejmember(memberidd) {
+    const [rejmemb] = await pool.query('UPDATE membership SET membership_status="rejected" WHERE membership_id=?', [memberidd])
+    return rejmemb
+}
+
+export async function newevent(clubid, title, description, role, seats, location, gplatos, gmikos, starttime, endtime) {
+    const newev = await pool.query('INSERT INTO event(ev_clubid, ev_title,  ev_description, ev_role, ev_seats, ev_location, ev_gplatos, ev_gmikos, ev_starttime, ev_endtime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',[clubid, title, description, role, seats, location, gplatos, gmikos, starttime, endtime])
+    return newev
+    
+}
+export async function reservationevent(eventid, userid) {
+
+    const [newreservation] = await pool.query(
+        `INSERT INTO reservation
+        (
+            res_evid,
+            res_userid,
+            res_status,
+            res_apprearedatevent
+        )
+        VALUES (?, ?, "pending", false)`,
+        [eventid, userid]
+    )
+
+    return newreservation
+}
+
+export async function acceptreservation(resid) {
+
+    const [apprres] = await pool.query(
+        'UPDATE reservation SET res_status="approved" WHERE res_id=?',
+        [resid]
+    )
+
+    return apprres
+}
+
+export async function rejectreservation(residd) {
+
+    const [rejres] = await pool.query(
+        'UPDATE reservation SET res_status="rejected" WHERE res_id=?',
+        [residd]
+    )
+
+    return rejres
+}
 
 
-CREATE TABLE membership{
-	membership_id INT AUTO_INCREMENT,
-	userid INT NOT NULL.
-	clubid INT NOT NULL,
-	membership_role ENUM('user', 'manager') DEFAULT 'user',
-	membership_status ENUM ('pending', 'approved', 'rejected') DEFAULT 'pending',
-	membershipdate timestamp default current_timestamp,
-	PRIMARY KEY(membership_id),
-	CONSTRAINT USERID
-	FOREIGN KEY(userid)
-	REFERENCES user(user_id)
-	ON DELETE CASCADE ON UPDATE CASCADE,
-	CONSTRAINT CLUBID
-	FOREIGN KEY(clubid)
-	REFERENCES club(club_id)
-	ON DELETE CASCADE ON UPDATE CASCADE
-	
-	
+export async function appearedatevent(residdd) {
 
-};
+    const [apear] = await pool.query(
+        'UPDATE reservation SET res_apprearedatevent=TRUE WHERE res_id=?',
+        [residdd]
+    )
 
-CREATE TABLE event {
-	event_id INT AUTO_INCREMENT,
-	ev_clubid INT NOT NULL,
-	ev_title VARCHAR(50) NOT NULL,
-	ev_description TEXT NOT NULL,
-	ev_role('public', 'private')
-	ev_seats INT,
-	ev_location VARCHAR(50) NOT NULL,
-	ev_gplatos DECIMAL(10,8) NOT NULL,
-	ev_gmikos DECIMAL(10,8) NOT NULL,
-	ev_starttime DATETIME NOT NULL,
-	ev_endtime DATETIME NOT NULL,
-	PRIMARY KEY(event_id),
-	CONSTRAINT EVCLUBID
-	FOREIGN KEY(ev_clubid)
-	REFERENCES club(club_id)
-	ON DELETE CASCADE ON UPDATE CASCADE
-};
+    return apear
+}
 
-CREATE TABLE reservation{
-	res_id INT AUTO_INCREMENT,
-	res_evid INT NOT NULL,
-	res_userid INT NOT NULL,
-	res_status ENUM ('pending', 'approved', 'rejected') DEFAULT 'pending',
-	res_apprearedatevent BOOLEAN DEFAULT FALSE,
-	reservationdate timestamp default current_timestamp,
-	PRIMARY KEY(res_id ),
-	CONSTRAINT RUSERID
-	FOREIGN KEY(res_userid)
-	REFERENCES user(user_id)
-	ON DELETE CASCADE ON UPDATE CASCADE,
-	CONSTRAINT RCLUBID
-	FOREIGN KEY(res_evid)
-	REFERENCES event(event_id)
-	ON DELETE CASCADE ON UPDATE CASCADE
+export async function newannouncements(idclub, iduser, anndescr, anntitle){
 
-};
+    const [newann] = await pool.query(
+        'INSERT INTO announcements(ann_clubid, ann_userid, ann_descr, ann_title) VALUES (?, ?, ?, ?)',
+        [idclub, iduser, anndescr, anntitle]
+    )
 
-CREATE TABLE announcements{
-	announc_id INT AUTO_INCREMENT,
-	ann_clubid INT NOT NULL,
-	ann_userid INT NOT NULL,
-	ann_descr TEXT NOT NULL,
-	ann_title VARCHAR(50) NOT NULL,
-	ann_date DATETIME default current_timestamp,
-	CONSTRAINT ANUSERID
-	FOREIGN KEY(ann_userid)
-	REFERENCES user(user_id)
-	ON DELETE CASCADE ON UPDATE CASCADE,
-	CONSTRAINT ANCLUBID
-	FOREIGN KEY(ann_clubid)
-	REFERENCES club(club_id)
-	ON DELETE CASCADE ON UPDATE CASCADE
-};	
+    return newann
+}
 
-CREATE TABLE review_EVENT{
-	rev_id INT AUTO_INCREMENT,
-	r_eventid INT NOT NULL,
-	r_userid INT NOT NULL ,
-	r_review INT NOT NULL,
-	r_descr TEXT NOT NULL
-	CONSTRAINT RVUSERID
-	FOREIGN KEY(r_userid)
-	REFERENCES user(user_id)
-	ON DELETE CASCADE ON UPDATE CASCADE,
-	CONSTRAINT RVEVENT
-	FOREIGN KEY(r_eventid)
-	REFERENCES event(event_id)
-	ON DELETE CASCADE ON UPDATE CASCADE
-};
-	
+export async function newreviewev(
+    reventid,
+    ruserid,
+    review,
+    revdescription
+) {
 
-CREATE TABLE statistics{
-	stats_id INT AUTO_INCREMENT,
-	stats_userid INT NOT NULL,
-	statstype ENUM('event statistics', 'members statistics', 'viewers statistics', 'app satistics', 'productivity statistics')
-	stats_creationdate DATETIME default current_timestamp,
-	stats TEXT NOT NULL,
-	CONSTRAINT ANUSERID
-	FOREIGN KEY(stats_userid)
-	REFERENCES user(user_id)
-	ON DELETE CASCADE ON UPDATE CASCADE
-};
+    const [newrev] = await pool.query(
+        'INSERT INTO review_EVENT(r_eventid, r_userid, r_review, r_descr) VALUES (?, ?, ?, ?)',
+        [reventid, ruserid, review, revdescription]
+    )
+
+    return newrev
+}
+
+export async function newstats(statsuserid, statstype, stats) {
+
+    const [newstats] = await pool.query(
+        'INSERT INTO statistics (stats_userid, statstype, stats) VALUES (?, ?, ?)',
+        [statsuserid, statstype, stats]
+    )
+
+    return newstats
+}
+
