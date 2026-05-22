@@ -20,7 +20,141 @@ export async function editprofile(id, userimg, bio, interests ) {
 
 export async function turntomanager(id) {
     const [managr] = await pool.query('UPDATE user SET role="manager" WHERE user_id=?', [id])
-    return managr
+    return managruse clup;
+CREATE TABLE user (
+	user_id INT AUTO_INCREMENT,
+	name VARCHAR(50) NOT NULL,
+	lastname VARCHAR(50) NOT NULL,
+	email VARCHAR(50) NOT NULL,
+	password VARCHAR(100) NOT NULL,
+	role ENUM('user', 'manager', 'admin') DEFAULT 'user',
+	profil_img VARCHAR(50) DEFAULT NULL,
+	user_bio TEXT DEFAULT NULL,
+	user_interests TEXT,
+	PRIMARY KEY(user_id)
+	
+);
+
+
+CREATE TABLE club (
+	club_id INT AUTO_INCREMENT,
+	title VARCHAR(50) NOT NULL UNIQUE,
+	description TEXT NOT NULL,
+	manager_id INT NOT NULL,
+	status enum('pending', 'approved', 'deleted') DEFAULT 'pending',
+	creationdate timestamp default current_timestamp,
+	PRIMARY KEY(club_id),
+	CONSTRAINT MANAGERID
+	FOREIGN KEY(manager_id)
+	REFERENCES user(user_id)
+	ON DELETE CASCADE ON UPDATE CASCADE
+);
+
+
+CREATE TABLE membership(
+	membership_id INT AUTO_INCREMENT,
+	userid INT NOT NULL,
+	clubid INT NOT NULL,
+	membership_role ENUM('user', 'manager') DEFAULT 'user',
+	membership_status ENUM ('pending', 'approved', 'rejected') DEFAULT 'pending',
+	membershipdate timestamp default current_timestamp,
+	PRIMARY KEY(membership_id),
+	CONSTRAINT USERID
+	FOREIGN KEY(userid)
+	REFERENCES user(user_id)
+	ON DELETE CASCADE ON UPDATE CASCADE,
+	CONSTRAINT CLUBID
+	FOREIGN KEY(clubid)
+	REFERENCES club(club_id)
+	ON DELETE CASCADE ON UPDATE CASCADE
+	
+	
+
+);
+
+CREATE TABLE event (
+	event_id INT AUTO_INCREMENT,
+	ev_clubid INT NOT NULL,
+	ev_title VARCHAR(50) NOT NULL,
+	ev_description TEXT NOT NULL,
+	ev_role enum('public', 'private'),
+	ev_seats INT,
+	ev_location VARCHAR(50) NOT NULL,
+	ev_gplatos DECIMAL(10,8) NOT NULL,
+	ev_gmikos DECIMAL(10,8) NOT NULL,
+	ev_starttime DATETIME NOT NULL,
+	ev_endtime DATETIME NOT NULL,
+	PRIMARY KEY(event_id),
+	CONSTRAINT EVCLUBID
+	FOREIGN KEY(ev_clubid)
+	REFERENCES club(club_id)
+	ON DELETE CASCADE ON UPDATE CASCADE
+);
+
+CREATE TABLE reservation (
+	res_id INT AUTO_INCREMENT,
+	res_evid INT NOT NULL,
+	res_userid INT NOT NULL,
+	res_status ENUM ('pending', 'approved', 'rejected') DEFAULT 'pending',
+	res_apprearedatevent BOOLEAN DEFAULT FALSE,
+	reservationdate timestamp default current_timestamp,
+	PRIMARY KEY(res_id ),
+	CONSTRAINT RUSERID
+	FOREIGN KEY(res_userid)
+	REFERENCES user(user_id)
+	ON DELETE CASCADE ON UPDATE CASCADE,
+	CONSTRAINT RCLUBID
+	FOREIGN KEY(res_evid)
+	REFERENCES event(event_id)
+	ON DELETE CASCADE ON UPDATE CASCADE
+
+);
+
+CREATE TABLE announcements (
+	announc_id INT AUTO_INCREMENT primary key,
+	ann_clubid INT NOT NULL,
+	ann_userid INT NOT NULL,
+	ann_descr TEXT NOT NULL,
+	ann_title VARCHAR(50) NOT NULL,
+	ann_date DATETIME default current_timestamp,
+	CONSTRAINT ANUSERID
+	FOREIGN KEY(ann_userid)
+	REFERENCES user(user_id)
+	ON DELETE CASCADE ON UPDATE CASCADE,
+	CONSTRAINT ANCLUBID
+	FOREIGN KEY(ann_clubid)
+	REFERENCES club(club_id)
+	ON DELETE CASCADE ON UPDATE CASCADE
+);	
+
+CREATE TABLE review_EVENT(
+	rev_id INT AUTO_INCREMENT primary key,
+	r_eventid INT NOT NULL,
+	r_userid INT NOT NULL ,
+	r_review INT NOT NULL,
+	r_descr TEXT NOT NULL,
+	CONSTRAINT RVUSERID
+	FOREIGN KEY (r_userid)
+	REFERENCES user(user_id)
+	ON DELETE CASCADE ON UPDATE CASCADE,
+	CONSTRAINT RVEVENT
+	FOREIGN KEY(r_eventid)
+	REFERENCES event(event_id)
+	ON DELETE CASCADE ON UPDATE CASCADE
+);
+	
+
+CREATE TABLE statistics (
+	stats_id INT AUTO_INCREMENT primary key,
+	stats_userid INT NOT NULL,
+	statstype ENUM('event statistics', 'members statistics', 'viewers statistics', 'app satistics', 'productivity statistics'),
+	stats_creationdate DATETIME default current_timestamp,
+	stats TEXT NOT NULL,
+	CONSTRAINT StUSERID
+	FOREIGN KEY(stats_userid)
+	REFERENCES user(user_id)
+	ON DELETE CASCADE ON UPDATE CASCADE
+);
 }
 
 export async function showprofile(id) {
