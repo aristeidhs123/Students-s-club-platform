@@ -301,3 +301,35 @@ export async function newstats(statsuserid, statstype, stats) {
     return newstats
 }
 
+CREATE TABLE chatbot_messages (
+    message_id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL,
+    user_problem TEXT NOT NULL,
+    bot_answer TEXT NOT NULL,
+    needs_admin BOOLEAN DEFAULT FALSE,
+    conversation_status ENUM('BOT_ONLY', 'WAITING_ADMIN', 'ANSWERED', 'CLOSED') DEFAULT 'BOT_ONLY',
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+
+    FOREIGN KEY (user_id) REFERENCES user(user_id)
+    ON DELETE CASCADE ON UPDATE CASCADE
+);
+
+CREATE TABLE contact_admin_messages (
+    contact_id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL,
+    chatbot_message_id INT,
+    full_name VARCHAR(100),
+    email VARCHAR(100),
+    problem TEXT NOT NULL,
+    admin_answer TEXT,
+    is_read BOOLEAN DEFAULT FALSE,
+    status ENUM('PENDING', 'ANSWERED', 'CLOSED') DEFAULT 'PENDING',
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    answered_at DATETIME NULL,
+
+    FOREIGN KEY (user_id) REFERENCES user(user_id)
+    ON DELETE CASCADE ON UPDATE CASCADE,
+
+    FOREIGN KEY (chatbot_message_id) REFERENCES chatbot_messages(message_id)
+    ON DELETE SET NULL ON UPDATE CASCADE
+);
