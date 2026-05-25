@@ -1,26 +1,3 @@
-import mysql from 'mysql2'
-import dotenv from 'dotenv'
-dotenv.config()
-const pool = mysql.createPool({
-    host: process.env.DB_HOST,
-    user: process.env.DB_USER,
-    password: process.env.DB_PASSWORD,
-    database: process.env.DB_NAME
-}).promise()
-
-export async function createuser(name , lastname, email, password) {
-    const newuser = await pool.query('INSERT INTO user (name, lastname, email, password, role) VALUES (?, ?, ?, ?, "user")',[name, lastname, email, password])
-    return newuser
-}
-
-export async function editprofile(id, userimg, bio, interests ) {
-    const [editpr] = await pool.query('UPDATE user SET profil_img = ?, user_bio = ?, user_interests = ? WHERE user_id = ?', [userimg, bio, interests, id])
-    return [editpr]
-}
-
-export async function turntomanager(id) {
-    const [managr] = await pool.query('UPDATE user SET role="manager" WHERE user_id=?', [id])
-    return managruse clup;
 CREATE TABLE user (
 	user_id INT AUTO_INCREMENT,
 	name VARCHAR(50) NOT NULL,
@@ -155,151 +132,6 @@ CREATE TABLE statistics (
 	REFERENCES user(user_id)
 	ON DELETE CASCADE ON UPDATE CASCADE
 );
-}
-
-export async function showprofile(id) {
-    const [shuser] = await pool.query('SELECT * FROM user WHERE user_id=? ',[id])
-    return shuser[0]
-}
-
-export async function club (title, descr, managerid) {
-    const newclub = await pool.query('INSERT INTO club (title, description, manager_id, status) VALUES (?,?,?, "pending")',[title, descr, managerid])
-     return newclub
-}
-export async function rejectclub(clubid) {
-    const [rejcl] = await pool.query('UPDATE club SET status="deleted" WHERE club_id=?', [clubid])
-    return rejcl
-}
-
-export async function acceptclub(clubidd) {
-    const [acccl] = await pool.query('UPDATE club SET status="approved" WHERE club_id=?', [clubidd])
-    return acccl
-}
-
-export async function showclubs() {
-    const [shclb] = await pool.query('SELECT * FROM club WHERE status="approved"')
-    return shclb
-    
-}
-
-export async function newmembership(iduser, idclub) {
-
-    const [newmembr] = await pool.query(
-        'INSERT INTO membership(userid, clubid, membership_role, membership_status) VALUES (?, ?, "user", "pending")',
-        [iduser, idclub]
-    )
-
-    return newmembr
-}
-
-export async function makemanagermember(idmanag) {
-
-    const [mangrmemb] = await pool.query(
-        'UPDATE membership SET membership_role="manager" WHERE membership_id=?',
-        [idmanag]
-    )
-
-    return mangrmemb
-}
-
-export async function apprmember(memberid) {
-    const [apprmemb] = await pool.query('UPDATE membership SET membership_status="approved" WHERE membership_id=?', [memberid])
-    return apprmemb
-}
-
-
-export async function rejmember(memberidd) {
-    const [rejmemb] = await pool.query('UPDATE membership SET membership_status="rejected" WHERE membership_id=?', [memberidd])
-    return rejmemb
-}
-
-export async function newevent(clubid, title, description, role, seats, location, gplatos, gmikos, starttime, endtime) {
-    const newev = await pool.query('INSERT INTO event(ev_clubid, ev_title,  ev_description, ev_role, ev_seats, ev_location, ev_gplatos, ev_gmikos, ev_starttime, ev_endtime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',[clubid, title, description, role, seats, location, gplatos, gmikos, starttime, endtime])
-    return newev
-    
-}
-export async function reservationevent(eventid, userid) {
-
-    const [newreservation] = await pool.query(
-        `INSERT INTO reservation
-        (
-            res_evid,
-            res_userid,
-            res_status,
-            res_apprearedatevent
-        )
-        VALUES (?, ?, "pending", false)`,
-        [eventid, userid]
-    )
-
-    return newreservation
-}
-
-export async function acceptreservation(resid) {
-
-    const [apprres] = await pool.query(
-        'UPDATE reservation SET res_status="approved" WHERE res_id=?',
-        [resid]
-    )
-
-    return apprres
-}
-
-export async function rejectreservation(residd) {
-
-    const [rejres] = await pool.query(
-        'UPDATE reservation SET res_status="rejected" WHERE res_id=?',
-        [residd]
-    )
-
-    return rejres
-}
-
-
-export async function appearedatevent(residdd) {
-
-    const [apear] = await pool.query(
-        'UPDATE reservation SET res_apprearedatevent=TRUE WHERE res_id=?',
-        [residdd]
-    )
-
-    return apear
-}
-
-export async function newannouncements(idclub, iduser, anndescr, anntitle){
-
-    const [newann] = await pool.query(
-        'INSERT INTO announcements(ann_clubid, ann_userid, ann_descr, ann_title) VALUES (?, ?, ?, ?)',
-        [idclub, iduser, anndescr, anntitle]
-    )
-
-    return newann
-}
-
-export async function newreviewev(
-    reventid,
-    ruserid,
-    review,
-    revdescription
-) {
-
-    const [newrev] = await pool.query(
-        'INSERT INTO review_EVENT(r_eventid, r_userid, r_review, r_descr) VALUES (?, ?, ?, ?)',
-        [reventid, ruserid, review, revdescription]
-    )
-
-    return newrev
-}
-
-export async function newstats(statsuserid, statstype, stats) {
-
-    const [newstats] = await pool.query(
-        'INSERT INTO statistics (stats_userid, statstype, stats) VALUES (?, ?, ?)',
-        [statsuserid, statstype, stats]
-    )
-
-    return newstats
-}
 
 CREATE TABLE chatbot_messages (
     message_id INT AUTO_INCREMENT PRIMARY KEY,
@@ -332,4 +164,117 @@ CREATE TABLE contact_admin_messages (
 
     FOREIGN KEY (chatbot_message_id) REFERENCES chatbot_messages(message_id)
     ON DELETE SET NULL ON UPDATE CASCADE
+);
+
+CREATE TABLE internal_schedule (
+    schedule_id INT AUTO_INCREMENT PRIMARY KEY,
+    club_id INT NOT NULL,
+    created_by INT NOT NULL,
+    title VARCHAR(100) NOT NULL,
+    description TEXT,
+    start_date DATE NOT NULL,
+    end_date DATE NOT NULL,
+    status ENUM('draft', 'active', 'completed', 'cancelled') DEFAULT 'draft',
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT SCH_CLUBID
+    FOREIGN KEY (club_id)
+    REFERENCES club(club_id)
+    ON DELETE CASCADE ON UPDATE CASCADE,
+
+    CONSTRAINT SCH_USERID
+    FOREIGN KEY (created_by)
+    REFERENCES user(user_id)
+    ON DELETE CASCADE ON UPDATE CASCADE
+);
+
+CREATE TABLE internal_activity (
+    activity_id INT AUTO_INCREMENT PRIMARY KEY,
+    schedule_id INT NOT NULL,
+    created_by INT NOT NULL,
+    title VARCHAR(100) NOT NULL,
+    description TEXT,
+    activity_date DATE NOT NULL,
+    start_time TIME,
+    end_time TIME,
+    location VARCHAR(100),
+    status ENUM('planned', 'updated', 'cancelled', 'completed') DEFAULT 'planned',
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT ACT_SCHEDULEID
+    FOREIGN KEY (schedule_id)
+    REFERENCES internal_schedule(schedule_id)
+    ON DELETE CASCADE ON UPDATE CASCADE,
+
+    CONSTRAINT ACT_USERID
+    FOREIGN KEY (created_by)
+    REFERENCES user(user_id)
+    ON DELETE CASCADE ON UPDATE CASCADE
+);
+
+CREATE TABLE activity_participation (
+    participation_id INT AUTO_INCREMENT PRIMARY KEY,
+    activity_id INT NOT NULL,
+    user_id INT NOT NULL,
+    participation_status ENUM('active', 'absent', 'pending') DEFAULT 'pending',
+    joined_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+
+    UNIQUE(activity_id, user_id),
+
+    CONSTRAINT PART_ACTIVITYID
+    FOREIGN KEY (activity_id)
+    REFERENCES internal_activity(activity_id)
+    ON DELETE CASCADE ON UPDATE CASCADE,
+
+    CONSTRAINT PART_USERID
+    FOREIGN KEY (user_id)
+    REFERENCES user(user_id)
+    ON DELETE CASCADE ON UPDATE CASCADE
+);
+
+CREATE TABLE activity_availability (
+    availability_id INT AUTO_INCREMENT PRIMARY KEY,
+    activity_id INT NOT NULL,
+    user_id INT NOT NULL,
+    availability_status ENUM('available', 'not_available', 'maybe') NOT NULL,
+    note TEXT,
+    submitted_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+
+    UNIQUE(activity_id, user_id),
+
+    CONSTRAINT AV_ACTIVITYID
+    FOREIGN KEY (activity_id)
+    REFERENCES internal_activity(activity_id)
+    ON DELETE CASCADE ON UPDATE CASCADE,
+
+    CONSTRAINT AV_USERID
+    FOREIGN KEY (user_id)
+    REFERENCES user(user_id)
+    ON DELETE CASCADE ON UPDATE CASCADE
+);
+
+CREATE TABLE activity_permission (
+    permission_id INT AUTO_INCREMENT PRIMARY KEY,
+    club_id INT NOT NULL,
+    user_id INT NOT NULL,
+    granted_by INT NOT NULL,
+    permission_type ENUM('manage_schedule', 'manage_activities', 'view_attendance') NOT NULL,
+    granted_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+
+    UNIQUE(club_id, user_id, permission_type),
+
+    CONSTRAINT PERM_CLUBID
+    FOREIGN KEY (club_id)
+    REFERENCES club(club_id)
+    ON DELETE CASCADE ON UPDATE CASCADE,
+
+    CONSTRAINT PERM_USERID
+    FOREIGN KEY (user_id)
+    REFERENCES user(user_id)
+    ON DELETE CASCADE ON UPDATE CASCADE,
+
+    CONSTRAINT PERM_GRANTEDBY
+    FOREIGN KEY (granted_by)
+    REFERENCES user(user_id)
+    ON DELETE CASCADE ON UPDATE CASCADE
 );
