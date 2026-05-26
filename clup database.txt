@@ -278,3 +278,48 @@ CREATE TABLE activity_permission (
     REFERENCES user(user_id)
     ON DELETE CASCADE ON UPDATE CASCADE
 );
+
+ALTER TABLE review_EVENT
+ADD CONSTRAINT UNIQUE_USER_EVENT_REVIEW
+UNIQUE (r_eventid, r_userid);
+
+ALTER TABLE event
+ADD COLUMN ev_status ENUM('upcoming', 'completed', 'cancelled') DEFAULT 'upcoming';
+
+ALTER TABLE statistics
+ADD COLUMN club_id INT NULL,
+ADD COLUMN event_id INT NULL,
+ADD COLUMN finalized BOOLEAN DEFAULT FALSE,
+ADD COLUMN finalized_at DATETIME NULL;
+
+ALTER TABLE statistics
+ADD CONSTRAINT ST_CLUBID
+FOREIGN KEY(club_id)
+REFERENCES club(club_id)
+ON DELETE CASCADE ON UPDATE CASCADE;
+
+ALTER TABLE statistics
+ADD CONSTRAINT ST_EVENTID
+FOREIGN KEY(event_id)
+REFERENCES event(event_id)
+ON DELETE SET NULL ON UPDATE CASCADE;
+
+CREATE TABLE club_page_visits (
+    visit_id INT AUTO_INCREMENT PRIMARY KEY,
+    club_id INT NOT NULL,
+    user_id INT NOT NULL,
+    visit_code VARCHAR(100) NOT NULL,
+    visited_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+
+    UNIQUE(club_id, user_id, visit_code),
+
+    CONSTRAINT VISIT_CLUBID
+    FOREIGN KEY(club_id)
+    REFERENCES club(club_id)
+    ON DELETE CASCADE ON UPDATE CASCADE,
+
+    CONSTRAINT VISIT_USERID
+    FOREIGN KEY(user_id)
+    REFERENCES user(user_id)
+    ON DELETE CASCADE ON UPDATE CASCADE
+);
