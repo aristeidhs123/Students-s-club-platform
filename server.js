@@ -4,6 +4,8 @@ import chatbotRoutes from "./routes/chatbotRoutes.js";
 import internalScheduleRoutes from "./routes/internalScheduleRoutes.js";
 import internalActivityRoutes from "./routes/internalActivityRoutes.js";
 import internalPermissionRoutes from "./routes/internalPermissionRoutes.js";
+import eventReviewRoutes from "./routes/eventReviewRoutes.js";
+import clubStatisticsRoutes from "./routes/clubStatisticsRoutes.js";
 
 const app = express();
 
@@ -16,6 +18,10 @@ app.use("/api/internal-schedules", internalScheduleRoutes);
 app.use("/api/internal-activities", internalActivityRoutes);
 
 app.use("/api/internal-permissions", internalPermissionRoutes);
+
+app.use("/api/event-reviews", eventReviewRoutes);
+
+app.use("/api/club-statistics", clubStatisticsRoutes);
 
 app.get("/", (req, res) => {
     res.send("Backend works!");
