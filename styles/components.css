@@ -1,0 +1,143 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* prevent page horizontal scroll which can hide header items */
+html, body { overflow-x: hidden; }
+
+button, input {
+  font: inherit;
+}
+
+button {
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+input {
+  color: var(--text-main);
+}
+
+/* BUTTONS */
+.login-btn,
+.primary-btn,
+.secondary-btn,
+.search-btn,
+.card-btn {
+  border-radius: 10px;
+  padding: 12px 20px;
+  font-weight: 600;
+}
+
+.login-btn {
+  background: #4a63e8;
+  color: #fff;
+}
+
+.login-btn { flex-shrink: 0; }
+
+.login-btn:hover {
+  opacity: 0.94;
+}
+
+.primary-btn {
+  background: var(--primary);
+  color: #fff;
+}
+
+.secondary-btn {
+  background: var(--secondary);
+  color: #fff;
+}
+
+.search-btn {
+  background: var(--primary);
+  color: #fff;
+  min-width: 110px;
+}
+
+.card-btn {
+  width: 100%;
+  background: var(--primary);
+  color: #fff;
+  padding: 13px 0;
+}
+
+.card-btn:hover,
+.primary-btn:hover,
+.secondary-btn:hover,
+.search-btn:hover {
+  transform: translateY(-1px);
+}
+
+/* CARDS */
+.card {
+  background: var(--bg-panel);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.card-top {
+  height: 130px;
+}
+
+.card-content {
+  padding: 24px;
+}
+
+.card-content h3 {
+  margin-bottom: 12px;
+  font-size: 1.3rem;
+}
+
+.card-content p {
+  color: var(--text-soft);
+  line-height: 1.7;
+  margin-bottom: 20px;
+}
+
+.tags {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 18px;
+}
+
+.tags span {
+  background: rgba(35, 38, 74, 0.95);
+  color: #cfcfff;
+  padding: 8px 12px;
+  border-radius: 999px;
+  font-size: 0.85rem;
+}
+
+.card-blue .card-top,
+.gradient-1 {
+  background: var(--blue);
+}
+
+.card-purple .card-top,
+.gradient-2 {
+  background: var(--purple);
+}
+
+.card-cyan .card-top,
+.gradient-3 {
+  background: var(--cyan);
+}
+
+.card-blue .card-btn {
+  background: #416dff;
+}
+
+.card-purple .card-btn {
+  background: #7f5dff;
+}
+
+.card-cyan .card-btn {
+  background: #34b8ff;
+}

@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+  <meta charset="UTF-8">
+  <title>Announcements</title>
+  <link rel="stylesheet" href="../styles/style.css">
+</head>
+
+<body>
+
+<header class="navbar">
+  <div class="logo">CI<span>UP</span></div>
+  <nav class="nav-links">
+    <a href="index.html">Home</a>
+    <a href="clubs.html">Clubs</a>
+    <a href="events.html">Events</a>
+    <a href="announcments.html">Announcements</a>
+    <a href="reviews.html">Reviews</a>
+    <a href="profile.html">Profile</a>
+    <a href="admin.html">Admin</a>
+  </nav>
+</header>
+
+<section class="page-note">
+  <p>**Σελίδα ανακοινώσεων: Δες ενημερώσεις και μηνύματα συλλόγων.**</p>
+</section>
+
+<section class="section">
+  <h2>Announcements</h2>
+  <div id="ann-container" class="cards-grid"></div>
+</section>
+
+<script>
+// TODO: Αντικατάστησε με fetch("/api/announcements")
+async function fetchAnnouncements() {
+  return [
+    {
+      title: "New Meeting",
+      description: "Συνάντηση μελών την Παρασκευή",
+      date: "2024-05-01"
+    }
+  ];
+}
+
+async function renderAnnouncements() {
+  const anns = await fetchAnnouncements();
+  const container = document.getElementById("ann-container");
+
+  container.innerHTML = anns.map(a => `
+    <div class="card">
+      <div class="card-content">
+        <h3>${a.title}</h3>
+        <p>${a.description}</p>
+        <p><strong>Date:</strong> ${a.date}</p>
+      </div>
+    </div>
+  `).join("");
+}
+
+renderAnnouncements();
+</script>
+
+</body>
+</html>

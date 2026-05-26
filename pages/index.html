@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CluP - Home</title>
+  <link rel="stylesheet" href="../styles/style.css" />
+</head>
+<body>
+  <header class="navbar">
+    <div class="logo">Cl<span>UP</span></div>
+    <nav class="nav-links">
+      <a href="index.html">Home</a>
+      <a href="clubs.html">Clubs</a>
+      <a href="events.html">Events</a>
+      <a href="announcments.html">Announcements</a>
+      <a href="reviews.html">Reviews</a>
+      <a href="profile.html">Profile</a>
+      <a href="admin.html">Admin</a>
+    </nav>
+    <button class="login-btn">Login</button>
+  </header>
+
+  <section class="page-note">
+    <p>**Αρχική σελίδα: Προβολή συλλόγων, εκδηλώσεων και γενική παρουσίαση του CluP.**</p>
+  </section>
+
+  <section class="hero">
+    <div class="overlay"></div>
+    <div class="hero-content">
+      <h1>ΣΛΟΓΚΑΝ.<br>σλογκαν.</h1>
+      <p>Ανακαλυψε μπλα μπλα μπλα μπλου μπλι μπλα.</p>
+      <div class="hero-actions">
+        <button class="primary-btn">Explore Clubs</button>
+        <button class="secondary-btn">Upcoming Events</button>
+      </div>
+    </div>
+  </section>
+
+  <section class="search-section">
+    <div class="search-box">
+      <input type="text" placeholder="Search clubs, events, announcements..." />
+      <button class="search-btn">Search</button>
+    </div>
+  </section>
+
+  <section class="categories">
+    <button class="active">All</button>
+    <button>Technology</button>
+    <button>Music</button>
+    <button>Sports</button>
+    <button>Volunteering</button>
+    <button>Gaming</button>
+  </section>
+
+  <section class="cards-section">
+    <div class="section-title">
+      <h2>Popular Student Clubs</h2>
+      <p>Οι πιο ενεργοί σύλλογοι αυτή τη στιγμή.</p>
+    </div>
+    <div class="cards-grid" id="clubsGrid">
+      <p>Clubs will load from backend...</p>
+    </div>
+  </section>
+
+  <section class="stats-section">
+    <div class="stat-box">
+      <h3>120+</h3>
+      <p>Student Clubs</p>
+    </div>
+    <div class="stat-box">
+      <h3>4.5k</h3>
+      <p>Registered Students</p>
+    </div>
+    <div class="stat-box">
+      <h3>320+</h3>
+      <p>Monthly Events</p>
+    </div>
+  </section>
+
+  <footer>
+    <p>Clup — University Community Platform</p>
+  </footer>
+
+  <script src="../connection_f_b/api.js" defer></script>
+</body>
+</html>

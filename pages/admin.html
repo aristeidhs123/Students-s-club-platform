@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+  <meta charset="UTF-8">
+  <title>Admin Panel</title>
+  <link rel="stylesheet" href="../styles/style.css">
+</head>
+
+<body>
+
+<header class="navbar">
+  <div class="logo">CI<span>UP</span></div>
+  <nav class="nav-links">
+    <a href="index.html">Feed</a>
+    <a href="clubs.html">Clubs</a>
+    <a href="events.html">Events</a>
+    <a href="announcements.html">Announcements</a>
+    <a href="reviews.html">Reviews</a>
+    <a href="profile.html">Profile</a>
+    <a href="admin.html">Admin</a>
+  </nav>
+</header>
+
+<section class="section">
+  <h2>Admin Dashboard</h2>
+
+  <div id="admin-container" class="cards-grid"></div>
+</section>
+
+<script>
+// TODO: Αντικατάστησε με fetch("/api/admin/dashboard")
+async function fetchAdminData() {
+  return {
+    pendingClubs: 3,
+    pendingMessages: 5,
+    statsAvailable: true
+  };
+}
+
+async function renderAdmin() {
+  const data = await fetchAdminData();
+  const container = document.getElementById("admin-container");
+
+  container.innerHTML = `
+    <div class="card">
+      <div class="card-content">
+        <h3>Pending Clubs</h3>
+        <p>${data.pendingClubs} clubs awaiting approval.</p>
+        <button class="btn btn-primary full">Review</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-content">
+        <h3>Admin Messages</h3>
+        <p>${data.pendingMessages} messages need attention.</p>
+        <button class="btn btn-primary full">Open</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-content">
+        <h3>Statistics</h3>
+        <p>View platform statistics.</p>
+        <button class="btn btn-primary full">View Stats</button>
+      </div>
+    </div>
+  `;
+}
+
+renderAdmin();
+</script>
+
+</body>
+</html>

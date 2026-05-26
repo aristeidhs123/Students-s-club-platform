@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+  <meta charset="UTF-8">
+  <title>Events</title>
+  <link rel="stylesheet" href="../styles/style.css">
+</head>
+
+<body>
+
+<header class="navbar">
+  <div class="logo">CI<span>UP</span></div>
+  <nav class="nav-links">
+    <a href="index.html">Home</a>
+    <a href="clubs.html">Clubs</a>
+    <a href="events.html">Events</a>
+    <a href="announcments.html">Announcements</a>
+    <a href="reviews.html">Reviews</a>
+    <a href="profile.html">Profile</a>
+    <a href="admin.html">Admin</a>
+  </nav>
+</header>
+
+<section class="page-note">
+  <p>**Σελίδα εκδηλώσεων: Προβολή και σύνδεση με events API.**</p>
+</section>
+
+<section class="section">
+  <h2>Events</h2>
+  <div id="events-container" class="cards-grid"></div>
+</section>
+
+<script>
+// TODO: Αντικατάστησε με fetch("/api/events")
+async function fetchEvents() {
+  return [
+    {
+      title: "Hackathon 2024",
+      description: "24-hour coding challenge",
+      location: "Patras",
+      seats: 50
+    }
+  ];
+}
+
+async function renderEvents() {
+  const events = await fetchEvents();
+  const container = document.getElementById("events-container");
+
+  container.innerHTML = events.map(ev => `
+    <div class="card">
+      <div class="card-top bg-purple"></div>
+      <div class="card-content">
+        <h3>${ev.title}</h3>
+        <p>${ev.description}</p>
+        <p><strong>Location:</strong> ${ev.location}</p>
+        <p><strong>Seats:</strong> ${ev.seats}</p>
+        <button class="btn btn-primary full">View Event</button>
+      </div>
+    </div>
+  `).join("");
+}
+
+renderEvents();
+</script>
+
+</body>
+</html>

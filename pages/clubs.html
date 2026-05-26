@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+  <meta charset="UTF-8">
+  <title>Clubs</title>
+
+  <!-- ΣΩΣΤΟ PATH ΓΙΑ CSS -->
+  <link rel="stylesheet" href="../styles/style.css">
+</head>
+
+<body>
+
+<header class="navbar">
+  <div class="logo">CI<span>UP</span></div>
+  <nav class="nav-links">
+    <a href="index.html">Home</a>
+    <a href="clubs.html">Clubs</a>
+    <a href="events.html">Events</a>
+    <a href="announcments.html">Announcements</a>
+    <a href="reviews.html">Reviews</a>
+    <a href="profile.html">Profile</a>
+    <a href="admin.html">Admin</a>
+  </nav>
+</header>
+
+<section class="page-note">
+  <p>**Σελίδα συλλόγων: Αναζήτηση και προβολή συλλόγων από το backend.**</p>
+</section>
+
+<section class="section">
+  <h2>All Clubs</h2>
+  <p>Προβολή όλων των συλλόγων.</p>
+
+  <div id="clubs-container" class="cards-grid">
+    <!-- JS θα βάλει εδώ τα clubs -->
+  </div>
+</section>
+
+<script>
+// ===============================
+//  BACKEND PLACEHOLDER
+// ===============================
+
+// TODO: Αντικατάστησε με fetch("/api/clubs")
+async function fetchClubs() {
+  return [
+    { title: "Computer Science Club", description: "Workshops & hackathons" },
+    { title: "Music Society", description: "Live εμφανίσεις & events" }
+  ];
+}
+
+async function renderClubs() {
+  const clubs = await fetchClubs();
+  const container = document.getElementById("clubs-container");
+
+  container.innerHTML = clubs.map(club => `
+    <div class="card">
+      <div class="card-top bg-blue"></div>
+      <div class="card-content">
+        <h3>${club.title}</h3>
+        <p>${club.description}</p>
+        <button class="btn btn-primary full">View Club</button>
+      </div>
+    </div>
+  `).join("");
+}
+
+renderClubs();
+</script>
+
+</body>
+</html>

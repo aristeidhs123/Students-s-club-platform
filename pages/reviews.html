@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+  <meta charset="UTF-8">
+  <title>Reviews</title>
+  <link rel="stylesheet" href="../styles/style.css">
+</head>
+
+<body>
+
+<header class="navbar">
+  <div class="logo">CI<span>UP</span></div>
+  <nav class="nav-links">
+    <a href="index.html">Home</a>
+    <a href="clubs.html">Clubs</a>
+    <a href="events.html">Events</a>
+    <a href="announcments.html">Announcements</a>
+    <a href="reviews.html">Reviews</a>
+    <a href="profile.html">Profile</a>
+    <a href="admin.html">Admin</a>
+  </nav>
+</header>
+
+<section class="page-note">
+  <p>**Σελίδα αξιολογήσεων: Εμφάνιση κριτικών εκδηλώσεων και μελλοντική σύνδεση με backend.**</p>
+</section>
+
+<section class="section">
+  <h2>Event Reviews</h2>
+  <div id="reviews-container" class="cards-grid"></div>
+</section>
+
+<script>
+// TODO: Αντικατάστησε με fetch("/api/reviews")
+async function fetchReviews() {
+  return [
+    {
+      event: "Hackathon 2024",
+      rating: 5,
+      description: "Amazing event!"
+    }
+  ];
+}
+
+async function renderReviews() {
+  const reviews = await fetchReviews();
+  const container = document.getElementById("reviews-container");
+
+  container.innerHTML = reviews.map(r => `
+    <div class="card">
+      <div class="card-content">
+        <h3>${r.event}</h3>
+        <p><strong>Rating:</strong> ${"★".repeat(r.rating)}</p>
+        <p>${r.description}</p>
+      </div>
+    </div>
+  `).join("");
+}
+
+renderReviews();
+</script>
+
+</body>
+</html>
+
+
+  <main class="page-layout">
+    <section class="page-header">
+      <h1>Reviews</h1>
+      <p>Προβολή και διαχείριση αξιολογήσεων.</p>
+    </section>
+
+    <div id="reviewsList">
+      <p>Reviews will load from backend...</p>
+    </div>
+  </main>
+</body>
+</html>
