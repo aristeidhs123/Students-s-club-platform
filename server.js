@@ -6,6 +6,8 @@ import internalActivityRoutes from "./routes/internalActivityRoutes.js";
 import internalPermissionRoutes from "./routes/internalPermissionRoutes.js";
 import eventReviewRoutes from "./routes/eventReviewRoutes.js";
 import clubStatisticsRoutes from "./routes/clubStatisticsRoutes.js";
+import appStatisticsRoutes from "./routes/appStatisticsRoutes.js";
+import profileRoutes from "./routes/profileRoutes.js";
 
 const app = express();
 
@@ -22,6 +24,10 @@ app.use("/api/internal-permissions", internalPermissionRoutes);
 app.use("/api/event-reviews", eventReviewRoutes);
 
 app.use("/api/club-statistics", clubStatisticsRoutes);
+
+app.use("/api/app-statistics", appStatisticsRoutes);
+
+app.use("/api/profile", profileRoutes);
 
 app.get("/", (req, res) => {
     res.send("Backend works!");
