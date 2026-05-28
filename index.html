@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Αίτηση Συμμετοχής</title>
+    
+    <link rel="stylesheet" href="style.css">
+
+    <link rel="stylesheet" href="modal.css">
+</head>
+<body>
+
+<h2>Φόρμα Συμμετοχής σε Club</h2>
+
+<button type="button" onclick="document.getElementById('id01').style.display='block'" class="open-btn">Κάνε Αίτηση</button>
+<div id="id01" class="modal">
+  
+  <form class="modal-content animate" action="#" method="POST">
+    
+    <div class="close-container">
+      <span onclick="document.getElementById('id01').style.display='none'" class="close" title="Close Modal">&times;</span>
+    </div>
+
+    <div class="form-container">
+      
+      <label for="clubid"><b>Επιλέξτε Club:</b></label>
+      <select id="clubid" name="clubid" required class="form-select">
+          <option value="">-- Διαλέξτε Ομάδα --</option>
+          
+      </select>
+
+    
+        
+      <button type="submit" class="submit-btn">Αποστολή Αίτησης</button>
+    </div>
+
+    <div class="bottom-container">
+      <button type="button" onclick="document.getElementById('id01').style.display='none'" class="cancel-btn">Cancel</button>
+    </div>
+
+  </form>
+</div>
+
+<h2>Φόρμα Αξιολόγησης</h2>
+
+<button type="button" id="openReview" onclick="document.getElementById('id02').style.display='block'" class="open-btn">Συμπλήρωσε Φόρμα</button><div id="id02" class="modal">
+  
+  <form class="modal-content animate" action="#" method="POST">
+    
+    <div class="close-container">
+      <span onclick="document.getElementById('id02').style.display='none'" class="close" title="Close Modal">&times;</span>
+    </div>
+    <div class="form-container"> 
+        <label for="clubid"><b>Επιλέξτε Event:</b></label>
+      <select id="event_id" name=
+      "eventid" required class="form-select">
+          <option value="">-- Επιλέξτε ΕVENT    --</option>
+          
+      </select>
+
+      
+        <label for="r_review"><b>Βαθμολογία (1-5):</b></label>
+      <select id="r_review" name="r_review" required class="form-select">
+          <option value="">-- Επιλέξτε βαθμό --</option>
+             <option value="5">5 - Άριστα ⭐⭐⭐⭐⭐</option>
+             <option value="4">4 - Πολύ Καλά ⭐⭐⭐⭐</option>
+             <option value="3">3 - Μέτρια ⭐⭐⭐</option>
+             <option value="2">2 - Κακά ⭐⭐</option>
+             <option value="1">1 - Πολύ Κακά ⭐</option>
+      </select>
+          
+
+
+    
+        
+      <button type="submit" class="submit-btn">Αποστολή Φόρμας</button>
+    </div>
+
+    <div class="bottom-container">
+      <button type="button" onclick="document.getElementById('id02').style.display='none'" class="cancel-btn">Cancel</button>
+    </div>
+
+  </form>
+</div>
+
+
+<h2>Δημιουργία Ανακοίνωσης</h2>
+
+<button type="button" id="openAnnounce" onclick="document.getElementById('id03').style.display='block'" class="open-btn">Νέα Ανακοίνωση</button>
+
+<div id="id03" class="modal">
+  <form class="modal-content animate" action="#" method="POST">
+    
+    <div class="close-container">
+      <span onclick="document.getElementById('id03').style.display='none'" class="close" title="Close Modal">&times;</span>
+    </div>
+
+    <div class="form-container"> 
+      
+      <label for="user_role"><b>Ο ρόλος σας:</b></label>
+      <select id="user_role" name="user_role" required class="form-select">
+          <option value="user">Απλός Χρήστης</option>
+          <option value="admin">Διαχειριστής (Admin)</option>
+      </select>
+
+      <label for="ann_clubid"><b>Επιλέξτε Club:</b></label>
+      <select id="ann_clubid" name="ann_clubid" required class="form-select">
+          <option value="">-- Διαλέξτε Ομάδα --</option>
+      </select>
+
+<div id="admin_only_fields" style="visibility: hidden; height: 0px; overflow: hidden; transition: all 0.3s;">          <label for="ann_visibility"><b>Τύπος Ανακοίνωσης:</b></label>
+          <select id="ann_visibility" name="ann_visibility" class="form-select">
+              <option value="public">Δημόσια (Ορατή σε όλους) 🌐</option>
+              <option value="private">Ιδιωτική (Μόνο για τα μέλη) 🔒</option>
+          </select>
+      </div>
+
+      <label for="ann_title"><b>Τίτλος Ανακοίνωσης:</b></label>
+      <input type="text" id="ann_title" name="ann_title" maxlength="50" required class="form-select" placeholder="π.χ. Έκτακτη Συνέλευση">
+
+      <label for="ann_descr"><b>Περιγραφή / Κείμενο:</b></label>
+      <textarea id="ann_descr" name="ann_descr" required class="form-select" placeholder="Γράψτε την ανακοίνωση εδώ..." rows="5" style="width: 100%; box-sizing: border-box; resize: vertical;"></textarea>
+        
+      <button type="submit" class="submit-btn">Δημοσίευση Ανακοίνωσης</button>
+    </div>
+
+    <div class="bottom-container">
+      <button type="button" onclick="document.getElementById('id03').style.display='none'" class="cancel-btn">Cancel</button>
+    </div>
+
+  </form>
+</div>
+
+
+<button type="button" id="openCreateClub" onclick="document.getElementById('id04').style.display='block'" class="open-btn">Δημιουργία Club</button>
+<div id="id04" class="modal">
+  <form class="modal-content animate" action="#" method="POST">
+    
+    <div class="close-container">
+      <span onclick="document.getElementById('id04').style.display='none'" class="close" title="Close Modal">&times;</span>
+    </div>
+
+    <div class="form-container"> 
+      <h2>Αίτηση Δημιουργίας Ομάδας</h2>
+      <p>Συμπληρώστε τα στοιχεία για να δημιουργήσετε ένα νέο Club. Η αίτησή σας θα εξεταστεί από τον Διαχειριστή.</p>
+      <hr>
+      
+      <label for="club_title"><b>Όνομα Ομάδας (Club):</b></label>
+      <input type="text" id="club_title" name="title" maxlength="50" required class="form-select" placeholder="π.χ. Club Τένις">
+
+      <label for="club_description"><b>Περιγραφή & Σκοπός:</b></label>
+      <textarea id="club_description" name="description" required class="form-select" placeholder="Περιγράψτε τον σκοπό της ομάδας και τις δραστηριότητες..." rows="5" style="width: 100%; box-sizing: border-box; resize: vertical;"></textarea>
+        
+      <button type="submit" class="submit-btn" style="margin-top: 15px;">Υποβολή Αίτησης Club</button>
+    </div>
+
+    <div class="bottom-container">
+      <button type="button" onclick="document.getElementById('id04').style.display='none'" class="cancel-btn">Cancel</button>
+    </div>
+
+  </form>
+</div>
+
+
+<script>
+// ==========================================
+// 1. Ο ΚΩΔΙΚΑΣ ΣΟΥ (ΦΟΡΜΑ 1 - id01)
+// ==========================================
+const modal = document.getElementById("id01");
+const openBtn = document.getElementById("openLogin");
+
+// OPEN για την πρώτη φόρμα
+if (openBtn) {
+  openBtn.onclick = function () {
+    modal.style.display = "block";
+  };
+}
+
+// CLOSE όταν πατάς έξω από την πρώτη φόρμα
+window.onclick = function (event) {
+  if (event.target === modal) {
+    modal.style.display = "none";
+  }
+};
+
+
+// ==========================================
+// 2. Η ΠΡΟΣΘΗΚΗ ΓΙΑ ΤΗ ΔΙΚΗ ΣΟΥ ΦΟΡΜΑ (ΦΟΡΜΑ 2 - id02)
+// ==========================================
+const modal2 = document.getElementById("id02");
+const openBtn2 = document.getElementById("openReview");
+
+// OPEN για τη δεύτερη φόρμα
+if (openBtn2) {
+  openBtn2.onclick = function () {
+    modal2.style.display = "block";
+  };
+}
+
+// CLOSE όταν πατάς έξω από τη δεύτερη φόρμα
+window.addEventListener('click', function (event) {
+  if (event.target === modal2) {
+    modal2.style.display = "none";
+  }
+});
+
+
+// ==========================================
+// 3. ΑΝΤΛΗΣΗ ΔΕΔΟΜΕΝΩΝ ΓΙΑ ΤΑ CLUBS (Φόρμα 1)
+// ==========================================
+async function loadClubs() {
+    const response = await fetch('get_clubs.php');
+    const clubs = await response.json();
+    const selectElement = document.getElementById('clubid');
+    
+    if (selectElement) {
+        clubs.forEach(club => {
+            const option = document.createElement('option');
+            option.value = club.id;
+            option.textContent = club.name;
+            selectElement.appendChild(option);
+        });
+    }
+}
+
+
+// ==========================================
+// 4. ΑΝΤΛΗΣΗ ΔΕΔΟΜΕΝΩΝ ΓΙΑ ΤΑ EVENTS (Φόρμα 2)
+// ==========================================
+async function loadEvents() {
+    const response = await fetch('get_events.php');
+    const events = await response.json();
+    const selectElement = document.getElementById('res_evid'); // Συνδέεται με το νέο id
+    
+    if (selectElement) {
+        events.forEach(event => {
+            const option = document.createElement('option');
+            option.value = event.event_id;       // Το ID από την SQL σου
+            option.textContent = event.ev_title; // Ο Τίτλος από την SQL σου
+            selectElement.appendChild(option);
+        });
+    }
+}
+
+
+// ==========================================
+// 5. ΦΟΡΤΩΣΗ ΔΕΔΟΜΕΝΩΝ ΜΟΛΙΣ ΑΝΟΙΞΕΙ Η ΣΕΛΙΔΑ
+// ==========================================
+   
+
+
+// ==========================================
+//  ΦΟΡΤΩΣΗ ΔΕΔΟΜΕΝΩΝ ΜΟΛΙΣ ΑΝΟΙΞΕΙ Η ΣΕΛΙΔΑ
+// ==========================================
+window.addEventListener('load', () => {
+    loadClubs();
+    loadEvents();
+});
+</script>
+</body>
+</html>
