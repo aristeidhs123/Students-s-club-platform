@@ -335,3 +335,40 @@ CREATE TABLE login_activity (
     REFERENCES user(user_id)
     ON DELETE CASCADE ON UPDATE CASCADE
 );
+
+
+
+DROP TABLE  announcements;
+
+
+
+CREATE TABLE private_announcements(
+	announc_id INT AUTO_INCREMENT,
+	ann_clubid INT NOT NULL,
+	ann_userid INT NOT NULL,
+	ann_descr TEXT NOT NULL,
+	ann_title VARCHAR(50) NOT NULL,
+	ann_date DATETIME default current_timestamp,
+	PRIMARY KEY(announc_id),
+	CONSTRAINT ANUSERID
+	FOREIGN KEY(ann_userid)
+	REFERENCES user(user_id)
+	ON DELETE CASCADE ON UPDATE CASCADE,
+	CONSTRAINT ANCLUBID
+	FOREIGN KEY(ann_clubid)
+	REFERENCES club(club_id)
+	ON DELETE CASCADE ON UPDATE CASCADE
+);	
+
+CREATE TABLE public_announcements(
+	publ_announc_id INT AUTO_INCREMENT,
+	publ_ann_managerid INT NOT NULL,
+	publ_ann_descr TEXT NOT NULL,
+	publ_ann_title VARCHAR(50) NOT NULL,
+	publ_ann_date DATETIME default current_timestamp,
+	PRIMARY KEY(publ_announc_id),
+	CONSTRAINT APNUSERID
+	FOREIGN KEY(publ_announc_id)
+	REFERENCES user(user_id)
+	ON DELETE CASCADE ON UPDATE CASCADE
+);
