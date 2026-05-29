@@ -1,0 +1,283 @@
+    
+<script>
+    //συναρτηση που δείχνει ολα τα κλαμπ που ειναι καποιος μανατζερ και εχει κουμπι στο καθενα και οταν το πατησει δημιουργει νεο ιβεντ
+    async function newopenevent() {
+        document.getElementById('submitbutton').addEventListener('click', async(event)=>{
+        event.preventDefault()
+        
+        const manageridev = "" // εδω βάζουμε το id του χρηστη που ειναι logged in
+
+        const res = await fetch('http://localhost:3000/api/showmanagerid',{
+            method:'POST',
+            headers:{
+                'Content-Type' : 'application/json'
+            },
+            body:JSON.stringify(manageridev)
+        })
+    
+        const res2 = await fetch('http://localhost:3000/api/showmanagerclub')
+        if(res2.ok){
+            const clubs = await res2.json()
+            const pr = document.getElementById('divname') //εδώ θα βάλουμε το όνομα του id του div που θα εμφανιστούν οι συλλογοι που ειανι μανατζερ
+            pr.innerHTML=''
+            clubs.data.forEach((item) => {
+                const eachclub = document.createElement("p")
+                eachclub.innerHTML = ` <p>Ονομα Συλλόγου:${item.title}</p>
+                                        <p>Περιγραφή: ${item.description}</p>
+                                        <p>ID Συλλόγου: ${item.club_id}</p>
+                                        <button type="submit" class="createopenevent"> Create Open Event </button>
+                                        <button type="submit" class="createprivateevent"> Create Close Event </button>
+                                        `
+                pr.appendChild(eachclub)
+                // κάτω από τον συλλογο υπάρχουν 2 κουμπια ενα για ανοιχτο event και ενα για κλειστο
+                
+                eachclub.querySelector('.createopenevent').addEventListener('click', async()=>{
+                        newevent(item.club_id, "public", manageridev, null )
+
+
+                })
+                eachclub.querySelector('.createprivateevent').addEventListener('click', async()=>{
+                    const eventseats = document.getElementById('seats').value; //εδω μπαινει το id απο input
+                    newevent(item.club_id, "private", manageridev, eventseats )
+
+
+                })
+            })
+        }
+    })
+}
+async function newevent(clubidev, evrole, manageridev, evseats) {
+    const eventtitle = document.getElementById('title').value; //εδω μπαινει το id απο input
+        const eventdescription = document.getElementById('description').value; //εδω μπαινει το id απο input
+        const eventlocation = document.getElementById('location').value; //εδω μπαινει το id απο input.
+        const eventstartingtime = document.getElementById('starttime').value; //εδω μπαινει το id απο input
+        const eventendtime = document.getElementById('endtime').value; //εδω μπαινει το id απο input
+        const eventmikos = document.getElementById('gmikos').value; //εδω μπαινει το id απο input
+        const eventplatos = document.getElementById('gplatos').value; //εδω μπαινει το id απο input
+   
+
+        const newev ={
+            title: eventtitle,
+            description: eventdescription,
+            managerid: manageridev,
+            evclubid: clubidev,
+            role: evrole,
+            location: eventlocation,
+            starttime: eventstartingtime,
+            endtime: eventendtime,
+            seats: evseats,
+            gmikos: eventmikos, 
+            gplatos: eventplatos
+        }
+
+        await fetch('http://localhost:3000/api/newevent',{
+            method:'POST',
+            headers:{
+                'Content-Type' : 'application/json'
+            },
+            body:JSON.stringify(newev)
+
+        })
+        .then(res=>console.log("new club send"))
+        .catch(error=> console.error("fetch didnt work"))
+}
+    
+//συναρτηση που δειχνει τα events των clubs που συμμετέχει ο χρήστης  
+    
+    async function joinevent(){
+        try{
+            const res = await fetch('http://localhost:3000/api/showusersevents')
+            if(res.ok){
+                const usersevents = await res.json()
+                const pr = document.getElementById('divname') //εδώ θα βάλουμε το όνομα του id του div που θα εμφανιστούν τα κλαμπσ
+                pr.innerHTML=''
+                usersevents.data.forEach((item) => {
+                    const eachevent = document.createElement("p")
+                    eachevent.innerHTML = ` <h3>${item.ev_title}</h3>
+                                            <p>Περιγραφή: ${item.ev_description}</p>
+                                            <p>Αριθμος Θέσεων: ${item.ev_seats}</p>
+                                            <p>Τοποθεσία: ${item.ev_location}</p>
+                                            <p>Ώρα Έναρξης: ${item.ev_starttime}</p>
+                                            <p>Ώρα Λήξης: ${item.ev_endtime}</p>
+                                            <button type="submit" class="joineventbutton"> Join Now </button>
+                                            `
+                    pr.appendChild(eachevent)
+
+                    const eventidev = item.event_id;
+                    const useridev = "" // εδω βάζουμε το id του χρηστη που ειναι logged in
+                    const newreservation={
+                        eventid: eventidev,
+                        userid: useridev 
+                    }
+
+                    eachevent.querySelector('.joineventbutton').addEventListener('click', async()=>{
+                        
+                        fetch('http://localhost:3000/api/joinevent',{
+                            method:'POST',
+                            headers:{
+                                'Content-Type' : 'application/json'
+                            },
+                            body:JSON.stringify(newreservation)
+                        })
+                    })
+                });
+            }
+            else{
+                throw new Error('error cannot fetch events')
+            }
+        }
+        catch(error){
+            console.error('Error:', error)
+        }
+    }
+
+
+    //συναρτηση που δειχνει τα reservation που μπορει να κανει accept decline ο manager 
+async function pendingreservations() {
+    try{
+            const res = await fetch('http://localhost:3000/api/showpendingreservation')
+            if(res.ok){
+                const reservations = await res.json()
+                const pr = document.getElementById('divname') //εδώ θα βάλουμε το όνομα του id του div που θα εμφανιστούν αι αιτήσεις
+                pr.innerHTML=''
+                reservations.data.forEach((item) => {
+                    const eachres = document.createElement("p")
+                    eachres.innerHTML = ` <p>ID Event:${item.res_evid}</p>
+                                            <p>ID Μέλους: ${item.res_userid}</p>
+                                            <p>ID Αίτησης: ${item.res_id}</p>
+                                            <button type="submit" class="acceptmember"> ACCEPT </button>
+                                            <button type="submit" class="rejectmember"> DECLINE </button>
+                                            `
+                    pr.appendChild(eachres)
+                    // κάτω από την αίτηση υπάρχουν 2 κουμπια ενα για αποδοχη μέλους και ενα για απόρριψη
+                    const reservationid = item.res_id
+                    eachres.querySelector('.acceptmember').addEventListener('click', async()=>{
+                        const newmember = document.getElementById(item.userid).value;
+
+                        fetch('http://localhost:3000/api/acceptreservation',{
+                            method:'POST',
+                            headers:{
+                                'Content-Type' : 'application/json'
+                            },
+                            body:JSON.stringify(reservationid)
+                        })
+                    })
+
+                    eachres.querySelector('.rejectmember').addEventListener('click', async()=>{
+                        const rejmember = item.userid;
+                        fetch('http://localhost:3000/api/rejectreservation',{
+                            method:'POST',
+                            headers:{
+                                'Content-Type' : 'application/json'
+                            },
+                            body:JSON.stringify(rejmember)
+                        })
+                    })
+                })
+            }
+            else{
+                throw new Error('error cannot fetch memberships')
+            }
+        }
+        catch(error){
+            console.error('Error:', error)
+        }
+    
+    
+}
+
+//συναρτηση για ολα τα events
+
+ async function showallevents(){
+        try{
+            const res = await fetch('http://localhost:3000/api/showallevents')
+            if(res.ok){
+                const allevents = await res.json()
+                const pr = document.getElementById('divname') //εδώ θα βάλουμε το όνομα του id του div που θα εμφανιστούν τα κλαμπσ
+                pr.innerHTML=''
+                allevents.data.forEach((item) => {
+                    const eacheventshow = document.createElement("p")
+                    eacheventshow.innerHTML = `<h3>${item.ev_title}</h3>
+                                            <p>Περιγραφή: ${item.ev_description}</p>
+                                            <p>Αριθμος Θέσεων: ${item.ev_seats}</p>
+                                            <p>Τοποθεσία: ${item.ev_location}</p>
+                                            <p>Ώρα Έναρξης: ${item.ev_starttime}</p>
+                                            <p>Ώρα Λήξης: ${item.ev_endtime}</p>
+
+                                            `
+                    pr.appendChild(eacheventshow)
+
+                });
+            }
+            else{
+                throw new Error('error cannot fetch events')
+            }
+        }
+        catch(error){
+            console.error('Error:', error)
+        }
+    }
+
+
+//συναρτηση για ολα τα open events
+     async function showpublicevents(){
+        try{
+            const res = await fetch('http://localhost:3000/api/showpublicevents')
+            if(res.ok){
+                const pubevents = await res.json()
+                const pr = document.getElementById('divname') //εδώ θα βάλουμε το όνομα του id του div που θα εμφανιστούν τα κλαμπσ
+                pr.innerHTML=''
+                pubevents.data.forEach((item) => {
+                    const eachpubevent = document.createElement("p")
+                    eachpubevent.innerHTML = ` <h3>${item.ev_title}</h3>
+                                            <p>Περιγραφή: ${item.ev_description}</p>
+                                            <p>Αριθμος Θέσεων: ${item.ev_seats}</p>
+                                            <p>Τοποθεσία: ${item.ev_location}</p>
+                                            <p>Ώρα Έναρξης: ${item.ev_starttime}</p>
+                                            <p>Ώρα Λήξης: ${item.ev_endtime}</p>
+
+                                            `
+                    pr.appendChild(eachpubevent)
+
+                });
+            }
+            else{
+                throw new Error('error cannot fetch events')
+            }
+        }
+        catch(error){
+            console.error('Error:', error)
+        }
+    }
+
+//συναρτηση για ολα τα priv events
+    async function showprivevents(){
+        try{
+            const res = await fetch('http://localhost:3000/api/showprivateevents')
+            if(res.ok){
+                const prevents = await res.json()
+                const pr = document.getElementById('divname') //εδώ θα βάλουμε το όνομα του id του div που θα εμφανιστούν τα κλαμπσ
+                pr.innerHTML=''
+                prevents.data.forEach((item) => {
+                    const eachprivevent= document.createElement("p")
+                    eachprivevent.innerHTML = ` <h3>${item.ev_title}</h3>
+                                            <p>Περιγραφή: ${item.ev_description}</p>
+                                            <p>Αριθμος Θέσεων: ${item.ev_seats}</p>
+                                            <p>Τοποθεσία: ${item.ev_location}</p>
+                                            <p>Ώρα Έναρξης: ${item.ev_starttime}</p>
+                                            <p>Ώρα Λήξης: ${item.ev_endtime}</p>
+                                            `
+                    pr.appendChild(eachprivevent)
+
+                });
+            }
+            else{
+                throw new Error('error cannot fetch events')
+            }
+        }
+        catch(error){
+            console.error('Error:', error)
+        }
+    }
+</script>
+    

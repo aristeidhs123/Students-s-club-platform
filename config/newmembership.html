@@ -1,0 +1,91 @@
+<script>
+    //συναρτηση που δειχνει ολες τις εκκρεμεις αιτησεις μελών (για τον manager)
+    async function showallpendingmemberships(){
+        try{
+            const res = await fetch('http://localhost:3000/api/pendingmemberships')
+            if(res.ok){
+                const memberships = await res.json()
+                const pr = document.getElementById('divname') //εδώ θα βάλουμε το όνομα του id του div που θα εμφανιστούν αι αιτήσεις
+                pr.innerHTML=''
+                memberships.data.forEach((item) => {
+                    const eachmembership = document.createElement("p")
+                    console.log(item)
+                    eachmembership.innerHTML = ` <p>ID Αίτησης:${item.membership_id}</p>
+                                            <p>ID Μέλους: ${item.userid}</p>
+                                            <p>ID Συλλόγου: ${item.clubid}</p>
+                                            <button type="submit" class="acceptmember"> ACCEPT </button>
+                                            <button type="submit" class="rejectmember"> DECLINE </button>
+                                            `
+                    pr.appendChild(eachmembership)
+                    // κάτω από την αίτηση υπάρχουν 2 κουμπια ενα για αποδοχη μέλους και ενα για απόρριψη
+
+                    eachmembership.querySelector('.acceptmember').addEventListener('click', async()=>{
+                        const newmember = document.getElementById(item.userid).value;
+
+                        fetch('http://localhost:3000/api/acceptnewmember',{
+                            method:'POST',
+                            headers:{
+                                'Content-Type' : 'application/json'
+                            },
+                            body:JSON.stringify(newmember)
+                        })
+
+
+                    })
+
+                    eachmembership.querySelector('.rejectmember').addEventListener('click', async()=>{
+                        const rejmember = document.getElementById(item.userid).value;
+                        fetch('http://localhost:3000/api/rejectnewmember',{
+                            method:'POST',
+                            headers:{
+                                'Content-Type' : 'application/json'
+                            },
+                            body:JSON.stringify(rejmember)
+                        })
+
+
+                    })
+
+                })
+            }
+            else{
+                throw new Error('error cannot fetch memberships')
+            }
+        }
+        catch(error){
+            console.error('Error:', error)
+        }
+
+}
+// συναρτηση που δείχνει όλους τους συλλόγους που συμμετέχει ο χρήστης
+
+async function usersMemberships(userid) {
+    const res = await fetch('http://localhost:3000/api/usersid',{
+            method:'POST',
+            headers:{
+                'Content-Type' : 'application/json'
+            },
+            body:JSON.stringify(userid)
+        })
+        try{
+            if(res.ok){
+                const membersps = await res.json()
+                const pr = document.getElementById('divname') //εδώ θα βάλουμε το όνομα του id του div που θα εμφανιστούν οι ομαδες που σημμετέχει ο χρήστης
+                membersps.data.forEach((item) => {
+                    const eachusersclub = document.createElement("p")
+                    eachusersclub.innerHTML += ` <h3>${item.title}</h3>
+                                            <p>Περιγραφή: ${item.description}</p>
+                                            `
+                    pr.appendChild(eachusersclub)
+
+            })
+        }
+        else{
+                throw new Error('error cannot fetch users clubs')
+        }
+    }
+    catch(error){
+            console.error('Error:', error)
+    }
+}
+</script>
