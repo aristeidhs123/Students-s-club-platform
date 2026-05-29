@@ -1,4 +1,5 @@
 import express from "express";
+import cors from "cors";
 import db from "./config/db.js";
 import chatbotRoutes from "./routes/chatbotRoutes.js";
 import internalScheduleRoutes from "./routes/internalScheduleRoutes.js";
@@ -10,6 +11,8 @@ import appStatisticsRoutes from "./routes/appStatisticsRoutes.js";
 import profileRoutes from "./routes/profileRoutes.js";
 
 const app = express();
+
+app.use(cors());
 
 app.use(express.json());
 
