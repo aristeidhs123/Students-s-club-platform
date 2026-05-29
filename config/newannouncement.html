@@ -1,0 +1,112 @@
+<script>
+
+
+    //συναρτηση για την δημιουργεία νεας ιδιωτικής ανακοίνωσης (για user)
+    async function createPrAnnouncement() {
+        document.getElementById('submitbutton').addEventListener('click', async(event)=>{
+        event.preventDefault()
+        
+        const useridjoin = "" // εδω βάζουμε το id του χρηστη που ειναι logged in
+            const res = await fetch('http://localhost:3000/api/usersid',{
+                method:'POST',
+                headers:{
+                    'Content-Type' : 'application/json'
+                },
+                body:JSON.stringify(userid)
+            })
+            try{
+                if(res.ok){
+                    const membersps = await res.json()
+                    const pr = document.getElementById('divname') //εδώ θα βάλουμε το όνομα του id του div που θα εμφανιστούν οι ομαδες που σημμετέχει ο χρήστης
+                    pr.innerHTML=''
+                    membersps.data.forEach((item) => {
+                        const eachusersclub = document.createElement("p")
+                        eachusersclub.innerHTML = ` <h3>${item.title}</h3>
+                                                <p>Περιγραφή: ${item.description}</p>
+                                                <p> type="submit" class="newannouncmentbutton">Write your announcment</p>
+                                                `
+                        pr.appendChild(eachusersclub)
+
+                        const clubidjoin = eachusersclub.querySelector(item.club_id);
+                        const announcmenttitle = document.getElementById('title').value; //εδω μπαινει το id του input
+                        const announcclubdescription = document.getElementById('description').value; //εδω μπαινει το id του input
+                        newannouncment={
+                            clubid: clubidjoin,
+                            userid: useridjoin,
+                            title: announcmenttitle, 
+                            descr: announcclubdescription
+
+                        }
+
+                        eachclub.querySelector('.newannouncmentbutton').addEventListener('click', async()=>{
+                            await fetch('http://localhost:3000/api/newprivateannouncments',{
+                                method:'POST',
+                                headers:{
+                                    'Content-Type' : 'application/json'
+                                },
+                                body:JSON.stringify(newannouncment)
+                            })
+                        })
+                })
+            }
+            else{
+                    throw new Error('error cannot fetch users clubs')
+            }
+    }
+    catch(error){
+            console.error('Error:', error)
+    }
+    })
+}
+
+//συναρτηση για την δημιουργεία ανακοινωσης (για MANAGER)
+async function newPublicAnnouncments() {
+    document.getElementById('submitbutton').addEventListener('click', async(event)=>{
+
+        const managerid = "" //id του manager
+        const publicannouncmenttitle = document.getElementById('title').value; //εδω μπαινει το id του input
+        const publicannouncclubdescription = document.getElementById('description').value; //εδω μπαινει το id του input
+        const publicannounc={
+            manageridann: managerid,
+            title:publicannouncmenttitle,
+            description:publicannouncclubdescription
+        }
+        const res = await fetch('http://localhost:3000/api/usersid',{
+                method:'POST',
+                headers:{
+                    'Content-Type' : 'application/json'
+                },
+                body:JSON.stringify(publicannounc)
+            })
+    })
+    
+}
+
+
+async function showallpublicannounc(){
+        try{
+            const res = await fetch('http://localhost:3000/api/showpublicannouncments')
+            if(res.ok){
+                const publicannounc = await res.json()
+                const pr = document.getElementById('divname') //εδώ θα βάλουμε το όνομα του id του div που θα εμφανιστούν τα κλαμπσ
+                pr.innerHTML=''
+                publicannounc.data.forEach((item) => {
+                    const eachpubannounc = document.createElement("p")
+                    eachpubannounc.innerHTML = ` <h3>${item.title}</h3>
+                                            <p>Περιγραφή: ${item.description}</p>
+                                            <p>Συντάκτης: ${item.managername}</p>
+                                            `
+                    pr.appendChild(eachpubannounc)
+
+                });
+            }
+            else{
+                throw new Error('error cannot fetch clubs')
+            }
+        }
+        catch(error){
+            console.error('Error:', error)
+        }
+    }
+
+</script>
